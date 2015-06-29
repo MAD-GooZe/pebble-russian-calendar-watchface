@@ -1,8 +1,6 @@
-!build/RussianCalendar.pbw
-
-
 # Ignore build generated files
 build
+!build/RussianCalendar.pbw
 
 # Ignore waf lock file
 .lock-waf*
