@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include <pebble_fonts.h>
 
 static Window *window;
 
@@ -84,6 +85,9 @@ static void setup_layout(Window *window) {
             text_layer_set_text_alignment(date_layers[i][j], GTextAlignmentCenter);
             layer_add_child(window_layer, text_layer_get_layer(date_layers[i][j]));
 
+            // regular font for working days
+            if (j != 5 && j != 6)
+                text_layer_set_font(date_layers[i][j], fonts_get_system_font(FONT_KEY_GOTHIC_14));
 
         }
         top_offset += cell_height;
