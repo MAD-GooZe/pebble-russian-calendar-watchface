@@ -2,7 +2,7 @@
   "uuid": "2bf7c204-67db-4272-9566-9836556c50bf",
   "shortName": "RussianCalendar",
   "longName": "RussianCalendar",
-  "companyName": "MakeAwesomeHappen",
+  "companyName": "Alexey Gusev",
   "versionLabel": "1.0",
   "sdkVersion": "3",
   "targetPlatforms": ["aplite", "basalt"],

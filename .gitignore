@@ -1,6 +1,6 @@
 # Ignore build generated files
 build/*
-!build/RussianCalendar.pbw
+!build/pebble-russian-calendar-watchface.pbw
 
 # Ignore waf lock file
 .lock-waf*
