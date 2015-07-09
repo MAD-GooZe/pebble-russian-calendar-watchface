@@ -1,9 +1,13 @@
+
 # Ignore build generated files
 build/*
 !build/pebble-russian-calendar-watchface.pbw
 
 # Ignore waf lock file
 .lock-waf*
+
+# gedit temp
+*~
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 
