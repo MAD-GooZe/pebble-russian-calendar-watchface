@@ -24,8 +24,11 @@ static const char* month_names[] = {
 static char* caption;
 #define CAPTION_LENGTH 100
 
+static bool inverted;
 
-//static BitmapLayer *bitmap_layer;
+static void invert_colors() {
+    inverted = !inverted;
+}
 
 static int get_days_in_month (int month, int year) {
     month += 1; // month should be 1..12
@@ -128,11 +131,11 @@ static void update_calendar(struct tm *tick_time, TimeUnits units_changed) {
 
                 // mark today
                 if (date_to_draw == date){
-                    text_layer_set_text_color(date_layers[i][j], GColorWhite);
-                    text_layer_set_background_color(date_layers[i][j], GColorBlack);
+                    text_layer_set_text_color(date_layers[i][j], inverted ? GColorBlack : GColorWhite);
+                    text_layer_set_background_color(date_layers[i][j], inverted ? GColorWhite: GColorBlack);
                 } else {
-                    text_layer_set_text_color(date_layers[i][j], GColorBlack);
-                    text_layer_set_background_color(date_layers[i][j], GColorWhite);
+                    text_layer_set_text_color(date_layers[i][j], inverted ? GColorWhite: GColorBlack);
+                    text_layer_set_background_color(date_layers[i][j], inverted ? GColorBlack : GColorWhite);
                 }
 
                 date_to_draw++;
@@ -181,6 +184,9 @@ static void deinit(void) {
 }
 
 int main(void) {
+
+    invert_colors();
+
     init();
 
     app_event_loop();

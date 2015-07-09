@@ -3,7 +3,7 @@ project(cpp)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
-set(PEBBLE_SDK_DIR /opt/pebble-dev/PebbleSDK-3.0)
+set(PEBBLE_SDK_DIR /opt/pebble-dev/)
 
 include_directories(${PEBBLE_SDK_DIR}/Pebble/basalt/include)
 
@@ -31,6 +31,6 @@ add_executable(tmp ${SOURCE_FILES})
 
 add_custom_target(
     RussianCalender
-    /opt/pebble-dev/PebbleSDK-3.0/bin/pebble build
+    /opt/pebble-dev/bin/pebble build
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
