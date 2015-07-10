@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include <pebble_fonts.h>
 
+
 static Window *window;
 
 static TextLayer *month_year_layer;
@@ -24,10 +25,28 @@ static const char* month_names[] = {
 static char* caption;
 #define CAPTION_LENGTH 100
 
-static bool inverted;
 
-static void invert_colors() {
-    inverted = !inverted;
+#define KEY_INVERT 0
+static GColor current_white, current_black;
+static void set_colors(bool inverted) {
+    if (!inverted) {
+        current_white = GColorWhite;
+        current_black = GColorBlack;
+    } else {
+        current_white = GColorBlack;
+        current_black = GColorWhite;
+    }
+
+
+    window_set_background_color(window, current_white);
+
+    text_layer_set_text_color(month_year_layer, current_black);
+    text_layer_set_background_color(month_year_layer, current_white);
+
+    for (int i = 0; i < CALENDAR_WIDTH; i++) {
+        text_layer_set_text_color(weekday_name_layers[i], current_white);
+        text_layer_set_background_color(weekday_name_layers[i], current_black);
+    }
 }
 
 static int get_days_in_month (int month, int year) {
@@ -71,8 +90,6 @@ static void setup_layout(Window *window) {
         text_layer_set_text(weekday_name_layers[i], weekday_names[i]);
         text_layer_set_text_alignment(weekday_name_layers[i], GTextAlignmentCenter);
         layer_add_child(window_layer, text_layer_get_layer(weekday_name_layers[i]));
-        text_layer_set_text_color(weekday_name_layers[i], GColorWhite);
-        text_layer_set_background_color(weekday_name_layers[i], GColorBlack);
     }
 
     top_offset += cell_height + 1;
@@ -131,17 +148,49 @@ static void update_calendar(struct tm *tick_time, TimeUnits units_changed) {
 
                 // mark today
                 if (date_to_draw == date){
-                    text_layer_set_text_color(date_layers[i][j], inverted ? GColorBlack : GColorWhite);
-                    text_layer_set_background_color(date_layers[i][j], inverted ? GColorWhite: GColorBlack);
+                    text_layer_set_text_color(date_layers[i][j], current_white);
+                    text_layer_set_background_color(date_layers[i][j], current_black);
                 } else {
-                    text_layer_set_text_color(date_layers[i][j], inverted ? GColorWhite: GColorBlack);
-                    text_layer_set_background_color(date_layers[i][j], inverted ? GColorBlack : GColorWhite);
+                    text_layer_set_text_color(date_layers[i][j], current_black);
+                    text_layer_set_background_color(date_layers[i][j], current_white);
                 }
 
                 date_to_draw++;
             } else {
                 date_txt[i][j][0] = 0; // delete text if there is any
+                text_layer_set_background_color(date_layers[i][j], current_white);
             }
+        }
+    }
+}
+
+// some shitty code from https://ninedof.wordpress.com/2014/05/24/pebble-sdk-2-0-tutorial-9-app-configuration/
+// I am not shure why this does even work
+// TODO: rewrite handler
+static void in_recv_handler(DictionaryIterator *iterator, void *context)
+{
+    //Get Tuple
+    Tuple *t = dict_read_first(iterator);
+    if(t)
+    {
+        switch(t->key) {
+            case KEY_INVERT:
+                //It's the KEY_INVERT key
+                if(strcmp(t->value->cstring, "on") == 0) {
+                    //Set and save as inverted
+                    set_colors(true);
+
+                    persist_write_bool(KEY_INVERT, true);
+                } else if(strcmp(t->value->cstring, "off") == 0) {
+                    //Set and save as not inverted
+                    set_colors(false);
+
+                    persist_write_bool(KEY_INVERT, false);
+                }
+                update_calendar(0, DAY_UNIT);
+                break;
+            default:
+                break;
         }
     }
 }
@@ -149,8 +198,8 @@ static void update_calendar(struct tm *tick_time, TimeUnits units_changed) {
 static void window_load(Window *window) {
 
     setup_layout(window);
+    set_colors(persist_read_bool(KEY_INVERT));
     update_calendar(0, DAY_UNIT);
-
 }
 
 static void window_unload(Window *window) {
@@ -173,6 +222,8 @@ static void init(void) {
             .unload = window_unload,
     });
 
+    app_message_register_inbox_received((AppMessageInboxReceived) in_recv_handler);
+    app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
     tick_timer_service_subscribe(DAY_UNIT, update_calendar);
 
     const bool animated = true;
@@ -185,10 +236,7 @@ static void deinit(void) {
 
 int main(void) {
 
-    invert_colors();
-
     init();
-
     app_event_loop();
     deinit();
 
