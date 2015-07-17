@@ -3,22 +3,33 @@
     <head>
         <title>Русский Календарь</title>
         <meta charset="utf-8"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
     </head>
     <body>
-        <h1>Русский Календарь</h1>
-        <h3>Настройки</h3>
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+        
+                    <h1>Русский Календарь</h1>
+                    <h3>Настройки</h3>
 
-        <p>
-            Инвертировать цвета:
-            <select id="invert_select">
-                <option value="off">Нет</option>
-                <option value="on">Да</option>
-            </select>
-        </p>
+                    <p>
+                        Инвертировать цвета:
+                        
+                        <div class="form-group">
+                            <select id="invert_select" class="form-control">
+                                <option value="off">Нет</option>
+                                <option value="on">Да</option>
+                            </select>
+                        </div>
+                    </p>
 
-        <p>
-            <button id="save_button">Сохранить</button>
-        </p>
+                    <p>
+                        <button id="save_button" class="btn btn-primary">Сохранить</button>
+                    </p>
+                </div>
+            </div>
+        </div>
 
         <script>
         //Setup to allow easy adding more options later
